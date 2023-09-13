@@ -35,7 +35,7 @@ export default function App() {
           {currentImage && (
             <img
               src={`https://api.memegen.link/images/${currentImage.id}/${topText}/${bottomText}.png`}
-              alt="Error ocured"
+              alt="not able to load the meme"
               data-test-id="meme-image"
             />
           )}
