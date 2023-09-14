@@ -1,27 +1,33 @@
 import './style.css';
+import { saveAs } from 'file-saver';
 import React, { useEffect, useState } from 'react';
 
 export default function App() {
   const [memes, setMemes] = useState([]);
-  const [currentImage, setCurrentImage] = useState(null);
-  const [topText, setTopText] = useState('');
-  const [bottomText, setBottomText] = useState('');
+  const [currentMeme, setCurrentMeme] = useState({
+    id: 'drunk',
+    name: 'Drunk Baby',
+  });
+  const [topText, setTopText] = useState('_');
+  const [bottomText, setBottomText] = useState('_');
 
   useEffect(() => {
     fetch('https://api.memegen.link/templates/')
-      .then((data) => data.json())
-      .then((response) => {
-        setMemes(response);
-        // Initialize currentImage with the first meme template when the data is loaded.
-        if (response.length > 0) {
-          const firstTemplate = response[0];
-          setCurrentImage({ id: firstTemplate.id, name: firstTemplate.name });
-        }
+      .then((response) => response.json())
+      .then((data) => {
+        setMemes(data);
       })
       .catch((error) => {
         console.log(`${error} The images can not be accessed`);
       });
   }, []);
+
+  const memeUrl = `https://api.memegen.link/images/${currentMeme.id}/${topText}/${bottomText}.png`;
+
+  // pass an updater function for download meme
+  const downloadImage = () => {
+    saveAs(memeUrl, 'generated_meme.png');
+  };
 
   return (
     <>
@@ -29,70 +35,76 @@ export default function App() {
         <h1>React Meme Generator</h1>
         <hr />
       </header>
-
       <main>
         <div className="meme">
-          {currentImage && (
-            <img
-              src={`https://api.memegen.link/images/${currentImage.id}/${topText}/${bottomText}.png`}
-              alt="not able to load the meme"
-              data-test-id="meme-image"
-            />
-          )}
+          <img
+            src={memeUrl}
+            alt="not able to load the meme"
+            data-test-id="meme-image"
+          />
         </div>
 
         <br />
         <br />
 
         <div className="form">
-          <div>
-            <label htmlFor="topText">
-              <span>Top text</span>
-            </label>
-            <input
-              id="topText"
-              value={topText}
-              onChange={(e) => setTopText(e.target.value)}
-            />
-            <br />
-            <br />
-            <label htmlFor="bottomText">
-              <span>Bottom text</span>
-            </label>
-            <input
-              id="bottomText"
-              value={bottomText}
-              onChange={(e) => setBottomText(e.target.value)}
-            />
-          </div>
+          <form onSubmit={(event) => event.preventDefault()}>
+            <div>
+              <label htmlFor="topText">Top text:</label>
+              <input
+                id="topText"
+                onChange={(event) => {
+                  // for totally empty boxes when page loads
+                  if (event.target.value.length > 0) {
+                    setTopText(event.target.value);
+                  } else {
+                    setTopText('');
+                  }
+                }}
+              />
+              <br />
+              <br />
+              <label htmlFor="bottomText">Bottom text:</label>
+              <input
+                id="bottomText"
+                onChange={(event) => {
+                  // for totally empty boxes when page loads
+                  if (event.target.value.length > 0) {
+                    setBottomText(event.target.value);
+                  } else {
+                    setBottomText('');
+                  }
+                }}
+              />
+            </div>
 
-          <br />
+            <br />
 
-          <div>
-            <label htmlFor="memeTemplate">Change the meme</label>
-            <select
-              id="memeTemplate"
-              value={currentImage ? currentImage.id : ''}
-              onChange={(e) => {
-                const selectedTemplate = memes.find(
-                  (template) => template.id === e.target.value,
-                );
-                setCurrentImage(selectedTemplate);
-              }}
-            >
-              {memes.map((template) => (
-                <option key={template.id} value={template.id}>
-                  {template.name}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div>
+              <label htmlFor="memeTemplate">Choose a meme:</label>
+              <select
+                id="memeTemplate"
+                onChange={(event) => {
+                  const selectedTemplate = memes.find(
+                    (template) => template.id === event.target.value,
+                  );
+                  setCurrentMeme(selectedTemplate);
+                }}
+              >
+                {memes.map((template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </form>
         </div>
 
         <br />
 
         <div>
-          <button>Download</button>
+          <button onClick={downloadImage}>Download</button>
         </div>
       </main>
     </>
