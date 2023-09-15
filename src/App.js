@@ -92,7 +92,7 @@ export default function App() {
                 }}
               >
                 {memes.map((template) => (
-                  <option key={template.id} value={template.id}>
+                  <option key={`memes-${template.id}`} value={template.id}>
                     {template.name}
                   </option>
                 ))}
