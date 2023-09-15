@@ -8,8 +8,8 @@ export default function App() {
     id: 'drunk',
     name: 'Drunk Baby',
   });
-  const [topText, setTopText] = useState('_');
-  const [bottomText, setBottomText] = useState('_');
+  const [topText, setTopText] = useState('_'); // use the _ for showing the meme when page loads, behaves like a placeholder for url
+  const [bottomText, setBottomText] = useState('_'); // use the _ for showing the meme when page loads, behaves like a placeholder for url
 
   useEffect(() => {
     fetch('https://api.memegen.link/templates/')
@@ -18,7 +18,7 @@ export default function App() {
         setMemes(data);
       })
       .catch((error) => {
-        console.log(`${error} The images can not be accessed`);
+        console.log(`${error} The memes can not be accessed`);
       });
   }, []);
 
@@ -35,22 +35,22 @@ export default function App() {
         <h1>React Meme Generator</h1>
         <hr />
       </header>
-      <main>
+      <main className="main">
         <div className="meme">
           <img
+            className="image"
             src={memeUrl}
             alt="not able to load the meme"
             data-test-id="meme-image"
           />
         </div>
-
         <br />
         <br />
-
         <div className="form">
           <form onSubmit={(event) => event.preventDefault()}>
             <div>
               <label htmlFor="topText">Top text:</label>
+              <br />
               <input
                 id="topText"
                 onChange={(event) => {
@@ -65,6 +65,7 @@ export default function App() {
               <br />
               <br />
               <label htmlFor="bottomText">Bottom text:</label>
+              <br />
               <input
                 id="bottomText"
                 onChange={(event) => {
@@ -77,11 +78,10 @@ export default function App() {
                 }}
               />
             </div>
-
             <br />
-
             <div>
               <label htmlFor="memeTemplate">Choose a meme:</label>
+              <br />
               <select
                 id="memeTemplate"
                 onChange={(event) => {
@@ -98,14 +98,13 @@ export default function App() {
                 ))}
               </select>
             </div>
+            <br />
+            <div>
+              <button onClick={downloadImage}>Download</button>
+            </div>
           </form>
         </div>
-
         <br />
-
-        <div>
-          <button onClick={downloadImage}>Download</button>
-        </div>
       </main>
     </>
   );
