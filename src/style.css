@@ -45,16 +45,19 @@
   font-weight: bold;
   width: 150px;
   text-transform: uppercase;
+  border: 3px;
 }
 
 .form select {
   border-radius: 10px;
   color: rgb(108, 66, 4);
   font-size: 15px;
+  border: 1px;
 }
 
 .form input {
   border-radius: 10px;
+  border: 1px;
 }
 
 .form label {
